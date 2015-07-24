@@ -1,0 +1,157 @@
+<?php
+/*
+Vernon Zidana
+Adfero Drupal Module
+Note: I am new to Drupal development and I am still learning 
+
+*/
+/* Implements hook permission()
+*code : https://api.drupal.org/api/drupal/modules!system!system.api.php/function/hook_permission/7
+*/
+function adfero_permission() {
+  return array(
+    'submit adfero' => array(
+      'title' => t('Submit adfero'),
+      'description' => t('Submit the adfero form.'),
+    ),
+	'see adfero_form submissions' => array(
+      'title' => t('See adfero_form submissions'),
+      'description' => t('See adfero_form submissions'),
+    ),
+  );
+}
+
+
+/* Implements hook menu()
+*code : https://api.drupal.org/api/drupal/modules%21system%21system.api.php/function/hook_menu/7
+*/
+function adfero_menu() {
+  $items=array();
+  $items['adfero'] = array(
+    'title' => 'adfero form',
+    'type' => MENU_NORMAL_ITEM,
+	'access arguments' => array('submit adfero'),
+	'page callback' => 'drupal_get_form',
+    
+    
+	'page arguments' => array('adfero_form'),
+  );
+  $items['adfero_form_submissions'] = array(
+    'title' => 'adfero form submissions',
+    'type' => MENU_NORMAL_ITEM,
+	'access arguments' => array('see adfero_form submissions'),
+	'page callback' => 'adfero_submissions',    
+  );
+
+  return $items;
+}
+
+/* adfero form
+*/
+
+function adfero_form($form,&$form_state){
+
+$form['firstname']=array(
+	'#type'=>'textfield',
+	'#title'=>t('Firstname'),	
+	'#required'=>TRUE,
+	'#description'=>t('Please enter your firstname'),
+);
+
+$form['lastname']=array(
+	'#type'=>'textfield',
+	'#title'=>t('Lastname'),
+	'#description'=>t('Please enter your lastname'),
+	'#default_value'=>'',
+	'#required'=>TRUE,
+);
+
+$form['phone']=array(
+	'#type'=>'textfield',
+	'#title'=>t('Phone Number'),
+	'#description'=>t('Please enter your phone number'),
+	'#default_value'=>'',
+	'#required'=>TRUE,
+);
+
+$form['email']=array(
+	'#type'=>'textfield',
+	'#title'=>t('Email Address'),
+	'#description'=>t('Please enter your email address'),
+	'#default_value'=>'',
+	'#required'=>TRUE,
+);
+
+
+$form['submit']=array(
+	'#type'=>'submit',
+	'#value'=>t('Send'),
+);
+
+   return $form;
+}
+
+/* Submit handler*/
+function adfero_form_submit($form,&$form_state){
+  $adferoid=db_insert('adfero')
+  ->fields(array(
+ 
+  'firstname'=>$form_state['values']['firstname'],
+  'lastname'=>$form_state['values']['lastname'],
+  'phone'=>$form_state['values']['phone'],
+  'email'=>$form_state['values']['email'], 
+  
+  ))
+  ->execute();
+  drupal_set_message(t('Your information has been submitted'));
+}
+
+/* See adfero_form submissions 
+For the admin only page
+*/
+
+function adfero_submissions(){
+$results=db_query("SELECT * FROM {adfero}");
+$header=array(t('ID'),t('Firstname'), t('Lastname'), t('Phone Number'), t('Email Address'));
+$rows=array();
+
+/*
+displaying the results as a list
+*/
+		// Create connection
+		$myconnection = new mysqli("localhost", "root", "", "justdrupal");
+		// Retrieve information from the database
+		$myinformation = $myconnection->query("SELECT * FROM adfero");
+				 echo '<ol>';
+				 // output data of each record
+				 while($record = $myinformation->fetch_assoc()) {			
+			
+					echo "<li>". "<b>Name:</b> ". $record["firstname"]. " ". $record["lastname"]. "<br><b> Phone:</b>  ". $record["phone"]. "<br><b>Email:</b>   ".$record["email"]."</li>";
+				 }
+				 echo '</ol>';	 
+
+				 
+foreach($results AS $result){
+$rows[]=array(
+	check_plain($result->adferoid),
+	check_plain($result->firstname),
+	check_markup($result->lastname),
+	check_markup($result->phone),
+	check_markup($result->email),
+
+);
+
+
+
+}
+
+
+return theme ('table',array('header'=>$header,'rows'=>$rows));    
+
+}
+
+
+
+
+
+?>

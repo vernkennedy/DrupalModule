@@ -1,0 +1,4 @@
+name="adfero"
+description="adfero contact form drupal module that prints out database entries (visible only to admin)"
+core="7.x"
+version="7.x-1.0"

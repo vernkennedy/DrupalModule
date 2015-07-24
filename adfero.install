@@ -1,0 +1,56 @@
+<?php
+/*
+Implements hook_schema()
+Starting code: https://api.drupal.org/api/drupal/modules%21system%21system.api.php/function/hook_schema/7
+
+*/
+function adfero() {
+  $schema['adfero'] = array(
+    'description' => 'The database table for adfero.',
+    'fields' => array(
+      'adferoid' => array(
+        'description' => 'The primary key /unique id.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      
+      'firstname' => array(
+        'description' => 'A field for firstname.',
+        'type' => 'varchar',
+        'length' => 50,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'lastname' => array(
+        'description' => 'A field for lastname.',
+		'length' => 50,
+        'type' => 'text',  
+		
+        'not null' => TRUE,
+        
+      ),
+	  'phone' => array(
+        'description' => 'A field for phone number.',
+		'length' => 50,
+        'type' => 'varchar',  
+		
+        'not null' => TRUE,
+        
+      ),
+	  'email' => array(
+        'description' => 'A field for email.',
+		'length' => 50,
+        'type' => 'varchar',  
+		
+        'not null' => TRUE,
+        
+      ),
+	  
+   ),
+    
+    'primary key' => array('adferoid'),
+  );
+  return $schema;
+}
+?>
